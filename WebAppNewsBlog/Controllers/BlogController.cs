@@ -1,4 +1,5 @@
 ﻿using HackerNewsApi.Interfaces.Services;
+using HackerNewsApi.Models.Post;
 using HackerNewsApi.Models.QueryParams;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,5 +32,18 @@ namespace HackerNewsApi.Controllers
 
             return Ok(count);
         }
+
+        [HttpGet("post/{slug}")]
+        public async Task<IActionResult> GetSinglePost(string slug)
+        {
+            var post = await _postService.GetPostBySlug(slug);
+            if (post == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(post);
+        }
+
     }
 }

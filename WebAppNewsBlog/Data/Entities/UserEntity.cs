@@ -34,6 +34,8 @@ namespace HackerNewsApi.Data.Entities
         public DateTime DateCreated { get; set; }
 
         public virtual ICollection<UserPostMapEntity> UserPosts { get; set; }
+        public virtual ICollection<CommentEntity> Comments { get; set; }
+
 
     }
 }

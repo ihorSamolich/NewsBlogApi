@@ -35,7 +35,7 @@ namespace HackerNewsApi.Data.Entities
 
         public virtual CategoryEntity Category { get; set; }
         public virtual ICollection<UserPostMapEntity> UserPosts { get; set; }
-
+        public virtual ICollection<CommentEntity> Comments { get; set; }
         public virtual ICollection<PostTagMapEntity> PostTags { get; set; }
     }
 }

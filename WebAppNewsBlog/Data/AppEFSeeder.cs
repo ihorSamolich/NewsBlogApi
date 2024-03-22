@@ -3,7 +3,6 @@ using HackerNewsApi.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using WebAppNewsBlog.Helpers;
-
 namespace WebAppNewsBlog.Data
 {
     public static class AppEFSeeder
@@ -16,6 +15,28 @@ namespace WebAppNewsBlog.Data
                 var context = service.GetRequiredService<AppEFContext>();
 
                 context.Database.Migrate();
+
+                if (!context.Users.Any())
+                {
+                    var fakeUser = new Faker<UserEntity>()
+                    .RuleFor(u => u.FirstName, f => f.Name.FirstName())
+                    .RuleFor(u => u.LastName, f => f.Name.LastName())
+                    .RuleFor(u => u.Email, f => f.Internet.Email())
+                    .RuleFor(u => u.Phone, f => f.Phone.PhoneNumber())
+                    .RuleFor(u => u.Password, f => BCrypt.Net.BCrypt.HashPassword(f.Internet.Password()))
+                    .RuleFor(u => u.Image, f => f.Internet.Avatar())
+                    .RuleFor(u => u.DateCreated, f => f.Date.Recent().ToUniversalTime());
+
+                    List<UserEntity> fakeUserData = fakeUser.Generate(10);
+
+                    foreach (var user in fakeUserData)
+                    {
+                        user.Image = await ImageWorker.SaveImageFromUrlAsync(user.Image);
+                    }
+
+                    await context.Users.AddRangeAsync(fakeUserData);
+                    await context.SaveChangesAsync();
+                }
 
                 if (!context.Categories.Any())
                 {

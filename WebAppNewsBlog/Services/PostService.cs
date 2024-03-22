@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HackerNewsApi.Data.Entities;
 using HackerNewsApi.Interfaces.Services;
 using HackerNewsApi.Models.Post;
 using HackerNewsApi.Models.QueryParams;
@@ -39,6 +40,20 @@ namespace HackerNewsApi.Services
         public int GetPostsCount()
         {
             return _context.Posts.Count();
+        }
+
+        public async Task<PostViewModel> GetPostBySlug(string slug)
+        {
+            var post = await _context.Posts
+                .Include(p => p.UserPosts)
+                    .ThenInclude(u => u.User)
+                .Include(p => p.Category)
+                .Include(p => p.PostTags)
+                    .ThenInclude(t => t.Tag)
+                .Where(p => p.UrlSlug == slug)
+                .SingleOrDefaultAsync();
+
+            return _mapper.Map<PostViewModel>(post);
         }
     }
 }
