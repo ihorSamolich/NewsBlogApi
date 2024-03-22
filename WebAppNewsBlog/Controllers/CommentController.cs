@@ -46,9 +46,9 @@ namespace HackerNewsApi.Controllers
         }
 
         [HttpPost("reply-to-comment")]
-        public async Task<IActionResult> ReplyToComment(int commentId, string content, string userEmail)
+        public async Task<IActionResult> ReplyToComment(CreateReplyViewModel createReply)
         {
-            var success = await _commentService.ReplyToComment(commentId, content, userEmail);
+            var success = await _commentService.ReplyToComment(createReply.CommentId, createReply.Content, createReply.UserEmail);
             if (success)
                 return Ok();
             else
